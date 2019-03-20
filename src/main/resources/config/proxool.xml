@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- the proxool configuration can be embedded within your own application's.
+Anything outside the "proxool" tag is ignored. -->
+<conn-pool>
+  <proxool>
+    <alias>TianyaWenxue</alias>
+    <driver-url>jdbc:jtds:sqlserver://m.newbook.chel.hk.ty:1433;DatabaseName=newbook;SelectMethod=cursor;useLOBs=false</driver-url>
+    <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+    </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>40</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+
+   <proxool>
+    <alias>Slave_TianyaWenxue</alias>
+    <driver-url>jdbc:jtds:sqlserver://m.newbook.chel.hk.ty:1433;DatabaseName=newbook;SelectMethod=cursor;useLOBs=false</driver-url>
+    <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+    </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>20</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+
+     <proxool00>
+    <alias>Bishai_TianyaWenxue</alias>
+    <driver-url>jdbc:jtds:sqlserver://m0.newbookhd.bbs.hk.ty:1433;DatabaseName=newbook_hd;SelectMethod=cursor;useLOBs=false</driver-url>
+    <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+    </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <minimum-connection-count>1</minimum-connection-count>
+    <maximum-connection-count>20</maximum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>20</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool00>
+
+
+
+
+  <proxool>
+    <alias>ebookpay_master</alias>
+    <driver-url>jdbc:mysql://m.ebook_pay.bbs.hk.ty:3306/ebook_pay?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true</driver-url>
+    <driver-class>org.gjt.mm.mysql.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+    </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>40</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+  <proxool>
+    <alias>ebookpay_slave</alias>
+    <driver-url>jdbc:mysql://s0.ebook_pay.bbs.hk.ty:3306/ebook_pay?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true</driver-url>
+    <driver-class>org.gjt.mm.mysql.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+    </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>40</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+
+   <proxool>
+    <alias>tianya_ebook_master</alias>
+    <driver-url>jdbc:mysql://m.tianya_ebook.chel.hk.ty:3306/tianya_ebook?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true</driver-url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+  </driver-properties>
+       <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>40</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+  <proxool>
+    <alias>tianya_ebook_slave</alias>
+    <driver-url>jdbc:mysql://s.tianya_ebook.chel.hk.ty:3306/tianya_ebook?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true</driver-url>
+    <driver-class>org.gjt.mm.mysql.Driver</driver-class>
+    <driver-properties>
+      <property name="user" value="qatest"/>
+      <property name="password" value="hainan2010"/>
+      <property name="autoReconnect" value="true"/>
+  </driver-properties>
+
+    <house-keeping-sleep-time>30000</house-keeping-sleep-time>
+    <house-keeping-test-sql>select 0</house-keeping-test-sql>
+    <maximum-connection-count>100</maximum-connection-count>
+    <minimum-connection-count>5</minimum-connection-count>
+    <maximum-connection-lifetime>1440000</maximum-connection-lifetime>
+    <simultaneous-build-throttle>40</simultaneous-build-throttle>
+    <recently-started-threshold>60000</recently-started-threshold>
+    <overload-without-refusal-lifetime>60000</overload-without-refusal-lifetime>
+    <maximum-active-time>900000</maximum-active-time>
+    <prototype-count>1</prototype-count>
+    <test-before-use>true</test-before-use>
+  </proxool>
+
+</conn-pool>

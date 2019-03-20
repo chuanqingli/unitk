@@ -1,0 +1,20 @@
+package unitk.util;
+
+import org.junit.Test;
+// import org.junit.runner.RunWith;
+
+import unitk.util.*;
+import java.util.*;
+
+public class SpringContextTests {
+
+	@Test
+	public void getBean() {
+        Map<String,String> sss = (Map<String,String>)SpringContext.getBean("dbmap");
+
+        // DataUtil util = SpringContext.getBean(DataUtil.class);
+        
+        System.out.println(sss);
+	}
+
+}

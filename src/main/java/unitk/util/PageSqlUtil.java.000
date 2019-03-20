@@ -1,0 +1,54 @@
+package unitk.util;
+import java.util.*;
+import unitk.service.*;
+public class PageSqlUtil{
+    protected String getSql_ms(String unisql,String order,int skipsize,int pagesize){
+        if(pagesize>0){
+            if(skipsize<=0){
+                return SetMapUtil.args2Str("select top ",pagesize," * from (",unisql,") _t0 ",order);
+            }
+
+            String unisql0 = SetMapUtil.args2Str("select *,row_number() over(",order,") _rownum from (",unisql,") _t00");
+            return SetMapUtil.args2Str("select * from (",unisql0,") _t0 where _t0._rownum>",skipsize," and _t0._rownum<=",skipsize+pagesize);
+        }
+        return SetMapUtil.args2Str("select * from (",unisql,") _t0 ",order);
+    }
+
+    protected String getSql_my(String unisql,String order,int skipsize,int pagesize){
+        if(pagesize>0){
+            if(skipsize<=0){
+                return SetMapUtil.args2Str("select * from (",unisql,") _t0 ",order," limit ",pagesize);
+            }
+
+            return SetMapUtil.args2Str("select * from (",unisql,") _t0 ",order," limit ",skipsize,",",pagesize);
+        }
+        return SetMapUtil.args2Str("select * from (",unisql,") _t0 ",order);
+    }
+
+    public String getSql(Map<String,Object> map){
+        String dbid = CommonUtil.GetReqStr(map.get("_dbid"));
+        if(dbid==null||dbid.length()<=0)return null;
+
+        String unisql = CommonUtil.GetReqStr(map.get("_unisql"));
+        if(unisql==null||unisql.length()<=0)return null;
+        String order = CommonUtil.GetReqStr(map.get("_order"));
+        if(order==null)order = "";
+        int skipsize = CommonUtil.GetReqNo(map.get("_skipsize"));
+        int pagesize = CommonUtil.GetReqNo(map.get("_pagesize"));
+
+        String dbtype = FwConfigService.getInstance().getDbTypeName(dbid);
+
+        if(dbtype.equals("sqlserver")){
+            return getSql_ms(unisql,order,skipsize,pagesize);
+        }
+
+        if(dbtype.equals("mysql")){
+            return getSql_my(unisql,order,skipsize,pagesize);
+        }
+
+        // logger.debug("tttttttt==>{}",map);
+        return null;
+    }
+
+
+}

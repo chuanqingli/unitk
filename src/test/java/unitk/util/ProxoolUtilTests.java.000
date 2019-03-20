@@ -1,0 +1,18 @@
+package unitk.util;
+
+import org.junit.Test;
+// import org.junit.runner.RunWith;
+
+import java.util.*;
+
+public class ProxoolUtilTests {
+
+	@Test
+	public void getBean() {
+
+        ProxoolUtil util = ProxoolUtil.getInstance();
+        
+        System.out.println("ProxoolUtil==>" + util.getList());
+	}
+
+}

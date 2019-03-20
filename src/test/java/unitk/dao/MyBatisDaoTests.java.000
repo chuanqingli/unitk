@@ -1,0 +1,22 @@
+package unitk.dao;
+
+import org.junit.Test;
+// import org.junit.runner.RunWith;
+
+import unitk.util.*;
+import java.util.*;
+
+public class MyBatisDaoTests {
+
+    @Test
+	public void selectList() {
+
+        MapUtil util = MapUtil.getInstance();
+        Map<String,Object> map = util.create(new HashMap<String,Object>(),new String[]{"_dbid","_sql"},new Object[]{"tianya_ebook_master","select * from tyf_reward_transfer_resp"});
+
+        MyBatisDao dao = new MyBatisDao();
+        List<Map<String,Object>> resp = dao.selectList(map);
+        System.out.println("MyBatisDao==>" + resp);
+	}
+
+}

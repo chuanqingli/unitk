@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        ">
+
+<bean id="TianyaWenxue" class="unitk.plugin.proxool.CustomProxoolDataSource">
+  <property name="aliasName" value="TianyaWenxue" />
+</bean>
+
+<bean id="tianya_ebook_master" class="unitk.plugin.proxool.CustomProxoolDataSource">
+  <property name="aliasName" value="tianya_ebook_master" />
+</bean>
+<bean id="tianya_ebook_slave" class="unitk.plugin.proxool.CustomProxoolDataSource">
+  <property name="aliasName" value="tianya_ebook_slave" />
+</bean>
+
+
+
+<bean id="dataSource" class="unitk.plugins.springframework.RoutingDataSource">
+    <property name="targetDataSources">
+        <map key-type="java.lang.String">
+            <entry key="TianyaWenxue" value-ref="TianyaWenxue"/>
+            <entry key="tianya_ebook_master" value-ref="tianya_ebook_master"/>
+            <entry key="tianya_ebook_slave" value-ref="tianya_ebook_slave"/>
+        </map>
+    </property>
+</bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:config/mybatis.cfg.xml"/>
+        <!-- 无需配置ibatis-config.xml中的mapper 由spring自动扫描加入 -->
+        <!-- <property name="mapperLocations" value="classpath:config/spring.xml"/> -->
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+            <constructor-arg index="0" ref="sqlSessionFactory" />
+    </bean>
+
+    <!-- 数据库映射 -->
+    <bean id="dbmap" class="java.util.HashMap" scope="singleton">
+      <constructor-arg index="0"><map>
+        <entry key="tianya_ebook" value="tianya_ebook_master:tianya_ebook_slave" />
+        <entry key="TianyaWenxue" value="TianyaWenxue:Slave_TianyaWenxue" />
+      </map></constructor-arg>
+    </bean>
+
+
+</beans>
