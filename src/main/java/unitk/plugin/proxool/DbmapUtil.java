@@ -1,0 +1,101 @@
+package unitk.plugin.proxool;
+
+import java.util.*;
+import unitk.util.BeanUtil;
+public final class DbmapUtil{
+    private DbmapUtil(){}
+    public static final DbmapUtil __instance = new DbmapUtil();
+    public static DbmapUtil getInstance(){
+        return __instance;
+    }
+
+    private static final Map<String,ProxoolBean> __dbappmap = getDbAppMap00();
+    //map的String,ProxoolBean分别为appid,首个master库的ProxoolBean
+    private static Map<String,ProxoolBean> getDbAppMap00(){
+        Map<String,String> app = (Map<String,String>)BeanUtil.getInstance().getBean("dbmap");
+        if(app==null||app.size()<=0)return null;
+
+        Map<String,ProxoolBean> proxoolmap = ProxoolUtil.getInstance().getProxoolMap();
+        if(proxoolmap==null||proxoolmap.size()<=0)return null;
+
+        Map<String,ProxoolBean> resp = new java.util.concurrent.ConcurrentHashMap<String,ProxoolBean>();
+        for (Map.Entry<String,String> entry: app.entrySet()){
+            String key = entry.getKey();
+            String val = entry.getValue();
+            val = val.replaceAll(" ","");
+            /*
+                    <!-- 映射关系语法: ';'号分从库节点关系标记, ':'号节点主从库(master-slave)关系标记, ','号分数据库主从(master-slave)组标记 -->
+                    <!-- 例子: m0:s0;s1;s2,m1:s0;s1,m2:s0;s1;s2 m0 s0 ..... 是proxool连接池别名 -->
+                    <!--1主3从,1主2从,1主3从-->
+             */
+
+            String master = val.split("[,:;]")[0];
+            // logger.info("key,value:" + JsonUtil.toJson(entry) + ":" + JsonUtil.toJson(new Object[]{key,val,master}));
+            ProxoolBean ppp = proxoolmap.get(master);
+            if(ppp==null)continue;
+            ppp.morealias = val;
+            ppp.masteralias = master;
+
+            String dbUrl = ppp.driverUrl.trim().toLowerCase();
+            ppp.dbtypeName = "mysql";
+            if(dbUrl.startsWith("jdbc:jtds:sqlserver://"))ppp.dbtypeName = "sqlserver";
+            resp.put(key,ppp);
+        }
+        return resp;
+    }
+
+    public String getDbTypeName(String dbId){
+        // logger.info("dddd=>" + JsonUtil.toJson(__dbappmap));
+        ProxoolBean ppp = __dbappmap.get(dbId);
+        if(ppp==null)return null;
+        return ppp.dbtypeName;
+    }
+
+    private ProxoolBean getProxoolBean(String key){
+        if(key==null||key.length()<=0)return null;
+        return __dbappmap.get(key);
+    }
+
+    //取值范围为[min,max],前后次序颠倒也不影响
+    private long getRandomLong(long min,long max){
+        return Math.round(Math.random()*(max-min)+min);
+    }
+
+    //得到实际映射的数据库id
+    public String getRouteId(String dbroute,String dbid){
+        if("rand".equals(dbroute))return getRandId(dbid);
+        if("slave".equals(dbroute))return getSlaveId(dbid);
+        return getMasterId(dbid);
+    }
+
+    //注意：这里没有用到更多的库，所以不做太深入分析了
+    private String getMasterId(String dbId){
+        ProxoolBean ppp = getProxoolBean(dbId);
+        if(ppp==null)return null;
+        String[] sss = ppp.morealias.split(":");
+        return sss[0];
+     }
+
+    //注意：这里没有用到更多的库，所以不做太深入分析了
+    private String getSlaveId(String dbId){
+        ProxoolBean ppp = getProxoolBean(dbId);
+        if(ppp==null)return null;
+        String[] sss = ppp.morealias.split(":");
+        return sss[1].split(";")[0];
+    }
+
+    private String getRandId(String dbId){
+        ProxoolBean ppp = getProxoolBean(dbId);
+        if(ppp==null)return null;
+
+        String[] sss = ppp.morealias.split("[,:;]");
+        List<String> sslist = new ArrayList<String>();
+        for(String ss : sss){
+            if(ss.length()<=0||sslist.contains(ss))continue;
+            sslist.add(ss);
+        }
+
+        int nnn = (int)getRandomLong(0,sslist.size()-1);
+        return sslist.get(nnn);
+    }
+}

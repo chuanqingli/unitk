@@ -1,14 +1,16 @@
 package unitk.util;
 import java.util.*;
+import unitk.vo.SqlBean;
 public interface SqlUtil{
 
     static SqlUtil getInstance(String dbtype){
-        return ttt.__map.get(dbtype);
+        return in.__map.get(dbtype);
     }
 
-    String getPageSql(String unisql,String order,int skipsize,int pagesize);
+    String getPageSql(SqlBean b);
 
-    class ttt{
+
+    abstract class in implements SqlUtil{
 
         private static Map<String,SqlUtil> __map = getMap();
 
@@ -29,8 +31,23 @@ public interface SqlUtil{
                 throw new RuntimeException(err);
             }
         }
+
+        protected String wrap(Object... o){
+            return StringUtil.getInstance().wrap(new StringBuffer(1024),"","",o).toString();
+        }
+
+        public final String getPageSql(SqlBean b){
+            if(b._sql!=null&&b._sql.length()>0)return b._sql;
+
+            if(b._unisql!=null&&b._unisql.length()>0){
+                return getPageSql_unisql(b._unisql,b._order,b._skipsize,b._pagesize);
+            }
+
+            return getPageSql_table(b);
+        }
+
+        abstract String getPageSql_unisql(String unisql,String order,int skipsize,int pagesize);
+        abstract String getPageSql_table(SqlBean b);
+
     }
-
-
-
 }

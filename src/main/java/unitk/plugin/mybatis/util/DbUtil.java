@@ -4,53 +4,17 @@ import unitk.plugin.mybatis.mapper.MyBatisMapper;
 import java.util.*;
 import org.apache.ibatis.session.SqlSession;
 
-import unitk.plugin.proxool.ProxoolBean;
-import unitk.plugin.proxool.ProxoolUtil;
+import unitk.plugin.proxool.DbmapUtil;
 
 import unitk.util.BeanUtil;
 import unitk.util.DataUtil;
+import unitk.util.PageUtil;
+import unitk.util.ListPageBean;
 import unitk.plugin.DataSourceSwitch;
 
-// import unitk.db.*;
-// import unitk.vo.*;
-
 public final class DbUtil implements unitk.util.DbUtil{
-    private static final Map<String,ProxoolBean> __dbappmap = getDbAppMap00();
-    //map的String,ProxoolBean分别为appid,首个master库的ProxoolBean
-    private static Map<String,ProxoolBean> getDbAppMap00(){
-        Map<String,String> app = (Map<String,String>)BeanUtil.getInstance().getBean("dbmap");
-        if(app==null||app.size()<=0)return null;
 
-        Map<String,ProxoolBean> proxoolmap = ProxoolUtil.getInstance().getProxoolMap();
-        if(proxoolmap==null||proxoolmap.size()<=0)return null;
-
-        Map<String,ProxoolBean> resp = new java.util.concurrent.ConcurrentHashMap<String,ProxoolBean>();
-        for (Map.Entry<String,String> entry: app.entrySet()){
-            String key = entry.getKey();
-            String val = entry.getValue();
-            val = val.replaceAll(" ","");
-            /*
-                    <!-- 映射关系语法: ';'号分从库节点关系标记, ':'号节点主从库(master-slave)关系标记, ','号分数据库主从(master-slave)组标记 -->
-                    <!-- 例子: m0:s0;s1;s2,m1:s0;s1,m2:s0;s1;s2 m0 s0 ..... 是proxool连接池别名 -->
-                    <!--1主3从,1主2从,1主3从-->
-             */
-
-            String master = val.split("[,:;]")[0];
-            // logger.info("key,value:" + JsonUtil.toJson(entry) + ":" + JsonUtil.toJson(new Object[]{key,val,master}));
-            ProxoolBean ppp = proxoolmap.get(master);
-            if(ppp==null)continue;
-            ppp.morealias = val;
-            ppp.masteralias = master;
-
-            String dbUrl = ppp.driverUrl.trim().toLowerCase();
-            ppp.dbtypeName = "mysql";
-            if(dbUrl.startsWith("jdbc:jtds:sqlserver://"))ppp.dbtypeName = "sqlserver";
-            resp.put(key,ppp);
-        }
-        return resp;
-    }
-
-    protected final MyBatisMapper getMapper(SqlSession session){
+    private final MyBatisMapper getMapper(SqlSession session){
         return session.getMapper(MyBatisMapper.class);
     }
 
@@ -58,10 +22,13 @@ public final class DbUtil implements unitk.util.DbUtil{
         return DataUtil.getInstance().toData(map.get(name),cc);
     }
 
+    private void chkstrkey(String key,String name){
+        if(key==null||key.length()<=0)throw new RuntimeException("SqlSession异常:" + name + "未赋值");
+    }
+
     //创建能执行映射文件中sql的sqlSession
     private SqlSession getSession(String key){
-        if(key==null||key.length()<=0)return null;
-
+        chkstrkey(key,"key");
         //resin ok
         DataSourceSwitch.setDataSourceType(key);
         return BeanUtil.getInstance().getBean("sqlSession",SqlSession.class);
@@ -71,105 +38,144 @@ public final class DbUtil implements unitk.util.DbUtil{
         // return (SqlSession)appContext.getBean(key);
     }
 
-    protected final SqlSession getSqlSession(Map<String,Object> map){
+    private final SqlSession getSqlSession(Map<String,Object> map){
         String dbid = toData(map,"_dbid","");
-        if(dbid==null||dbid.length()<=0)return null;
+        chkstrkey(dbid,"dbid");
 
-        String dbtype = getDbTypeName(dbid);
-        if(dbtype==null||dbtype.length()<=0)return null;
+        String dbtype = DbmapUtil.getInstance().getDbTypeName(dbid);
+        chkstrkey(dbtype,"dbtype");
         map.put("_dbtype",dbtype);
 
         StackTraceElement[] strcss = Thread.currentThread().getStackTrace();
         StackTraceElement strc = strcss[2];
 
         String method = strc.getMethodName();
+        String dbroute = "";
         if(method.startsWith("select")){
-            String dbroute = toData(map,"_dbroute","");
-            if("rand".equals(dbroute))return getRandSession(dbid);
-            if("slave".equals(dbroute))return getSlaveSession(dbid);
+            dbroute = toData(map,"_dbroute","");
         }
-        return getMasterSession(dbid);
-    }
-
-    private String getDbTypeName(String dbId){
-        // logger.info("dddd=>" + JsonUtil.toJson(__dbappmap));
-        ProxoolBean ppp = __dbappmap.get(dbId);
-        if(ppp==null)return null;
-        return ppp.dbtypeName;
-    }
-
-    public final SqlSession getMasterSession(String key){
-        return getMaster(key);
-    }
-
-    public final SqlSession getSlaveSession(String key){
-        return getSlave(key);
-    }
-
-    public final SqlSession getRandSession(String key){
-        return getRand(key);
-    }
-
-    //注意：这里没有用到更多的库，所以不做太深入分析了
-    public String getMasterId(String dbId){
-        ProxoolBean ppp = getProxoolBean(dbId);
-        if(ppp==null)return null;
-        String[] sss = ppp.morealias.split(":");
-        return sss[0];
-     }
-
-    //注意：这里没有用到更多的库，所以不做太深入分析了
-    public String getSlaveId(String dbId){
-        ProxoolBean ppp = getProxoolBean(dbId);
-        if(ppp==null)return null;
-        String[] sss = ppp.morealias.split(":");
-        return sss[1].split(";")[0];
-    }
-
-    //取值范围为[min,max],前后次序颠倒也不影响
-    private long getRandomLong(long min,long max){
-        return Math.round(Math.random()*(max-min)+min);
-    }
-
-    public String getRandId(String dbId){
-        ProxoolBean ppp = getProxoolBean(dbId);
-        if(ppp==null)return null;
-
-        String[] sss = ppp.morealias.split("[,:;]");
-        List<String> sslist = new ArrayList<String>();
-        for(String ss : sss){
-            if(ss.length()<=0||sslist.contains(ss))continue;
-            sslist.add(ss);
-        }
-
-        int nnn = (int)getRandomLong(0,sslist.size()-1);
-        return sslist.get(nnn);
-    }
-
-    private ProxoolBean getProxoolBean(String key){
-        if(key==null||key.length()<=0)return null;
-        return __dbappmap.get(key);
-    }
-
-
-    public SqlSession getMaster(String key){
-        String dbid = getMasterId(key);
-        return getSession(dbid);
-    }
-
-    public SqlSession getSlave(String key){
-        String dbid = getSlaveId(key);
-        return getSession(dbid);
-    }
-
-    public SqlSession getRand(String key){
-        String dbid = getRandId(key);
-        return getSession(dbid);
+        String routeid = DbmapUtil.getInstance().getRouteId(dbroute,dbid);
+        return getSession(routeid);
     }
 
     public final List<Map<String,Object>> selectList(Map<String,Object> map){
         SqlSession session = getSqlSession(map);
         return getMapper(session).selectList(map);
     }
+
+
+
+
+    // public final List<Map<String,Object>> call(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).call(map);
+    // }
+
+    // public final int insert(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).insert(map);
+    // }
+
+    // public final int insertAndGetKey(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).insertAndGetKey(map);
+    // }
+
+
+    // public final int update(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).update(map);
+    // }
+
+    // public final int delete(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).delete(map);
+    // }
+
+    // public final Map<String,Object> selectOne(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).selectOne(map);
+    // }
+
+    // public final int selectCount(Map<String,Object> map){
+    //     SqlSession session = getSqlSession(map);
+    //     return getMapper(session).selectCount(map);
+    // }
+
+    // //在selectList参数的基础上，增加_datacount,_pagenumber
+    // public final ListPageBean<Map<String,Object>> selectPage(Map<String,Object> map){
+    //     int datacount = toData(map,"_datacount",0);
+    //     int pagenumber = toData(map,"_pagenumber",0);
+    //     int pagesize = toData(map,"_pagesize",0);
+    //     if(pagenumber<1||pagesize<=0)return null;
+
+    //     //datacount<0时，触发selectCount查询
+    //     if(datacount<0){
+    //         Map<String,Object> map0 = new HashMap<String,Object>(map);
+    //         // logger.debug("tttttt==>" + map0);
+    //         datacount = selectCount(map0);
+    //     }
+
+    //     int pagecount = PageUtil.getInstance().getPageCount(datacount,pagesize);
+    //     if(pagecount<=0)return null;
+
+    //     if(pagenumber>pagecount)return null;
+    //     int lastsize = PageUtil.getInstance().getLastSize(datacount,pagesize);
+
+    //     int skipsize = (pagenumber-1)*pagesize;
+    //     Map<String,Object> map1 = new HashMap<String,Object>(map);
+    //     map1.put("_skipsize",skipsize);
+
+    //     List<Map<String,Object>> pagelist = selectList(map1);
+
+    //     ListPageBean<Map<String,Object>> pp = new ListPageBean<Map<String,Object>>();
+    //     pp.setDataCount(datacount);
+    //     pp.setPageCount(pagecount);
+    //     pp.setLastSize(lastsize);
+    //     pp.setPageNumber(pagenumber);
+    //     pp.setPageSize(pagesize);
+    //     pp.setDataList(pagelist);
+    //     return pp;
+    // }
+
+    // public final List<Map<String,Object>> queryList(Map<String,Object> map){
+    //     map.put("_dbroute","slave");
+    //     return selectList(map);
+    // }
+    // public final Map<String,Object> queryOne(Map<String,Object> map){
+    //     map.put("_dbroute","slave");
+    //     return selectOne(map);
+    // }
+    // public final int queryCount(Map<String,Object> map){
+    //     map.put("_dbroute","slave");
+    //     return selectCount(map);
+    // }
+    // protected final ListPageBean<Map<String,Object>> queryPage(Map<String,Object> map){
+    //     map.put("_dbroute","slave");
+    //     return selectPage(map);
+    // }
+
+    // public final Map<String,Object> queryCacheOne(Map<String,Object> map,CacheBean<Map<String,Object>> cache){
+    //     map.put("_dbroute","slave");
+    //     return selectCacheOne(map,cache);
+    // }
+    // public final List<Map<String,Object>> queryCacheList(Map<String,Object> map,CacheBean<List<Map<String,Object>>> cache){
+    //     map.put("_dbroute","slave");
+    //     return selectCacheList(map,cache);
+    // }
+    // public final ListPageBean<Map<String,Object>> queryCachePage(Map<String,Object> map,CacheBean<ListPageBean<Map<String,Object>>> cache){
+    //     map.put("_dbroute","slave");
+    //     return selectCachePage(map,cache);
+    // }
+
+    // protected final List<Map<String,Object>> execProc(String dbid,String sql,Set<String> addedset,Map<String,Object> inmap){
+    //     Map<String,Object> reqmap = new HashMap<String,Object>(inmap);
+    //     reqmap.putAll(SetMapUtil.arr2Map(new String[]{"_dbid","_sql"},new Object[]{dbid,sql}));
+    //     List<Map<String,Object>> resplist = call(reqmap);
+    //     if(addedset==null||addedset.size()<=0)return resplist;
+    //     Map<String,Object> tmpmap = SetMapUtil.mapOpSet("*",reqmap,addedset);
+    //     inmap.putAll(tmpmap);
+    //     return resplist;
+    // }
 
 }

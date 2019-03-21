@@ -1,0 +1,45 @@
+package unitk.util;
+import java.util.*;
+public final class BasicSqlUtil{
+    private BasicSqlUtil(){}
+    private final static BasicSqlUtil __instance = new BasicSqlUtil();
+    public static BasicSqlUtil getInstance(){
+        return __instance;
+    }
+
+    private void chkstrkey(String key,String name){
+        if(key==null||key.length()<=0)throw new RuntimeException(name + "未赋值");
+    }
+
+    private <T> T toData(Map<String,Object> map,String name,T cc){
+        return DataUtil.getInstance().toData(map.get(name),cc);
+    }
+
+    public String selectList(Map<String,Object> map){
+        String dbid = toData(map,"_dbid","");
+        chkstrkey(dbid,"dbid");
+        String sql = toData(map,"_sql","");
+        if(sql!=null&&sql.length()>0)return sql;
+
+        String unisql = toData(map,"_unisql","");
+        chkstrkey(unisql,"unisql");
+        String order = toData(map,"_order","");
+        if(order==null)order = "";
+        int skipsize = toData(map,"_skipsize",0);
+        int pagesize = toData(map,"_pagesize",0);
+
+        String dbtype = toData(map,"_dbtype","");
+        chkstrkey(dbtype,"dbtype");
+
+        SqlBean vo = new SqlBean();
+        VoMapUtil.
+
+        return SqlUtil.getInstance(dbtype).getPageSql(unisql,order,skipsize,pagesize);
+    }
+
+
+    public String selectOne(Map<String,Object> map){
+        map.put("_pagesize",1);
+        return selectList(map);
+    }
+}

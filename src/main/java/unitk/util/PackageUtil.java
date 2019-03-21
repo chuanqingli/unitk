@@ -73,6 +73,7 @@ public final class PackageUtil{
 
 
     //得到指定接口的实现类，类和接口均需在同一目录下
+    @SuppressWarnings(value="unchecked")
     public Set<Class> getImplSet(Class src){
         List<Class> kset = getClasses(src,false);
         Set<Class> resp = new HashSet<Class>();

@@ -2,7 +2,12 @@ package unitk.util;
 
 import java.util.*;
 
-/**集合处理*/
+/**集合处理
+javac -Xlint:unchecked DataUtil.java DateUtil.java CollectionUtil.java
+javac -Xlint:unchecked *.java
+rm *.class
+
+ */
 public final class CollectionUtil{
     private CollectionUtil(){}
     private final static CollectionUtil __instance = new CollectionUtil();
@@ -17,26 +22,20 @@ public final class CollectionUtil{
         return DataUtil.getInstance().toData(oo,cc,isthrow);
     }
 
-    public <A extends Collection<T>,T> A create(A resp,T... args){
+    @SafeVarargs
+    public final <A extends Collection<T>,T> A create(A resp,T... args){
         if(resp==null||args==null)return resp;
         resp.addAll(Arrays.asList(args));
         return resp;
     }
 
-    // @SuppressWarnings(value="unchecked")
-    // public <A extends Collection> A create(A resp,A args){
-    //     if(resp==null||args==null)return resp;
-    //     resp.addAll(args);
-    //     return resp;
-    // }
-
-    public <A extends Collection<T>,T> A create(A resp,T cc,Object... args){
+    public final <A extends Collection<T>,T> A create(A resp,T cc,Object... args){
         if(resp==null||args==null)return resp;
         Collection ccc = Arrays.asList(args);
         return create(resp,cc,ccc);
     }
 
-    public <A extends Collection<T>,T> A create(A resp,T cc,Collection args){
+    public final <A extends Collection<T>,T> A create(A resp,T cc,Collection args){
         if(resp==null||args==null)return resp;
         for(Object oo : args){
             resp.add(toData(oo,cc));

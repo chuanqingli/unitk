@@ -25,7 +25,8 @@ public final class ConfUtil {
         return _prop.getProperty(key);
     }
 
-    public <T> T getBean(Class<T> s){
+    @SuppressWarnings(value="unchecked")
+    public final <T> T getBean(Class<T> s){
         String key = s.getName();
         Class val = null;
         try{

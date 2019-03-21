@@ -10,7 +10,6 @@ public class DbUtilTests {
 	@Test
 	public void getBean() {
 
-        // System.out.println(SqlUtil.ttt);
         DbUtil util = DbUtil.getInstance();
         Map<String,Object> map = MapUtil.getInstance().create(new HashMap<String,Object>(),new String[]{"_dbid","_sql"},new Object[]{"tianya_ebook","select * from tyf_reward_transfer_resp"});
 

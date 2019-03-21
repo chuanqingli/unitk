@@ -7,6 +7,8 @@ import java.lang.reflect.*;
 javac -encoding utf-8 VoMapUtil.java
 java VoMapUtil
 */
+
+@SuppressWarnings(value="unchecked")
 public class VoMapUtil{
     private Map<Class,Map<String,Field>> __vosFieldMap = new HashMap<Class,Map<String,Field>>();//字段集字符串缓存
 
