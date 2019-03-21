@@ -13,4 +13,7 @@ public class SqlBean implements java.io.Serializable{
     public String _key = "";
     public String _sql = "";
     public String _unisql = "";
+    public String _method = "";
+    public String _values = "";//insert
+    public String _sets = "";//update
 }
