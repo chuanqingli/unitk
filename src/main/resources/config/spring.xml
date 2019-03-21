@@ -23,7 +23,7 @@
 
 
 
-<bean id="dataSource" class="unitk.plugins.springframework.RoutingDataSource">
+<bean id="dataSource" class="unitk.plugin.springframework.RoutingDataSource">
     <property name="targetDataSources">
         <map key-type="java.lang.String">
             <entry key="TianyaWenxue" value-ref="TianyaWenxue"/>

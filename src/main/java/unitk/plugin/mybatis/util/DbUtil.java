@@ -9,7 +9,7 @@ import unitk.plugin.proxool.ProxoolUtil;
 
 import unitk.util.BeanUtil;
 import unitk.util.DataUtil;
-import unitk.util.DataSourceHolder;
+import unitk.plugin.DataSourceSwitch;
 
 // import unitk.db.*;
 // import unitk.vo.*;
@@ -63,7 +63,7 @@ public final class DbUtil implements unitk.util.DbUtil{
         if(key==null||key.length()<=0)return null;
 
         //resin ok
-        DataSourceHolder.setDataSourceType(key);
+        DataSourceSwitch.setDataSourceType(key);
         return BeanUtil.getInstance().getBean("sqlSession",SqlSession.class);
 
         //ice ok

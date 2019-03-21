@@ -2,14 +2,6 @@ package unitk.util;
 import java.util.*;
 public final class PageSqlUtil{
 
-    public interface PageSqlRoute{
-        String getSql(String unisql,String order,int skipsize,int pagesize);
-    }
-
-    private String getSql(String dbtype,String unisql,String order,int skipsize,int pagesize){
-        return "";
-    }
-
     private void chkstrkey(String key,String name){
         if(key==null||key.length()<=0)throw new RuntimeException(name + "未赋值");
     }
@@ -32,6 +24,7 @@ public final class PageSqlUtil{
         String dbtype = toData(map,"_dbtype","");
         chkstrkey(dbtype,"dbtype");
 
-        return PageSqlHandler.getInstance(dbtype).getSql(unisql,order,skipsize,pagesize);
+        return SqlUtil.getInstance(dbtype).getPageSql(unisql,order,skipsize,pagesize);
+        // return PageSqlHandler.getInstance(dbtype).getSql(unisql,order,skipsize,pagesize);
     }
 }

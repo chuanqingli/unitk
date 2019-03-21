@@ -1,8 +1,9 @@
 package unitk.util;
 
 public interface BeanUtil{
+    public final static BeanUtil __instance = ConfUtil.getInstance().getBean(BeanUtil.class);
     public static BeanUtil getInstance(){
-        return unitk.plugins.springframework.BeanUtil.getInstance();
+        return __instance;
     }
 
     <T> T getBean(Class<T> s);

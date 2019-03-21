@@ -1,3 +1,4 @@
+mvn build
 mvn clean
 mvn package
 mvn package -Dmaven.test.skip=true
@@ -5,7 +6,8 @@ mvn test -Dtest=MyBatisDaoTests
 mvn test -Dtest=ProxoolUtilTests,MyBatisDaoTests
 mvn test -Dtest=SpringContextTests
 mvn test -Dtest=DbUtilTests
-mvn test -Dtest=PageSqlHandlerTests
+mvn test -Dtest=JsonUtilTests
+mvn test -Dtest=SqlUtilTests
 
 
 

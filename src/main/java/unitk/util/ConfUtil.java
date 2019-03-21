@@ -14,25 +14,7 @@ public final class ConfUtil {
         return __instance;
     }
 
-    private final static Properties _prop = getProperties();
-
-    /**
-     * 初始化
-     */
-    private static Properties getProperties(){
-        Properties prop = new Properties();
-        try {
-            // InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("classpath:config/unitk.conf");
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/unitk.conf");
-
-            // InputStream in = ConfUtil.class.getResourceAsStream("/config/unitk.conf");
-            BufferedReader bf = new BufferedReader(new InputStreamReader(in,"utf-8"));
-            prop.load(bf);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return prop;
-    }
+    private final static Properties _prop = PropertiesUtil.getProperties("config/unitk.conf");
 
     /**
      * 根据key读取对应的value
@@ -41,10 +23,6 @@ public final class ConfUtil {
      */
     public String getProperty(String key){
         return _prop.getProperty(key);
-    }
-
-    public String toString(){
-        return _prop.toString();
     }
 
     public <T> T getBean(Class<T> s){

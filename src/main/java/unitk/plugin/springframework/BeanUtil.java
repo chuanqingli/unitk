@@ -1,16 +1,9 @@
-package unitk.plugins.springframework;
+package unitk.plugin.springframework;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 // import org.springframework.core.io.*;
 
 public final class BeanUtil implements unitk.util.BeanUtil{
-
-    private BeanUtil(){}
-    private final static unitk.util.BeanUtil __instance = new BeanUtil();
-    public static unitk.util.BeanUtil getInstance(){
-        return __instance;
-    }
-
     private static final ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:config/spring.xml");
     // private static final Resource __resource = new ClassPathResource("config/mybatis.cfg.xml");
 
