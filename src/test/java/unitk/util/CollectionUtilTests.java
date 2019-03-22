@@ -8,10 +8,10 @@ import java.util.*;
 
 public class CollectionUtilTests {
 
-	@Test
-	public void getBean() {
-
         CollectionUtil util = CollectionUtil.getInstance();
+	// @Test
+	public void create() {
+
         Set<Integer> ttt = util.create(new HashSet<Integer>(),23,45,67);
         Set<Integer> ttt1 = util.create(new HashSet<Integer>(),0,23,45,67,"999");
         

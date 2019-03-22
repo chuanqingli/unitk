@@ -8,6 +8,7 @@ mvn test -Dtest=SpringContextTests
 mvn test -Dtest=DbUtilTests
 mvn test -Dtest=JsonUtilTests
 mvn test -Dtest=SqlUtilTests
+mvn test -Dtest=InsertSqlBuilderTests
 
 
 

@@ -3,6 +3,7 @@ package unitk.util;
 import java.util.*;
 import java.math.*;
 import java.lang.reflect.*;
+import java.sql.Timestamp;
 public final class DataUtil{
 
     private DataUtil(){}
@@ -72,5 +73,26 @@ public final class DataUtil{
         }
 
         return (T)oo;
+    }
+
+    private String wrapsql(String s){
+        return StringUtil.getInstance().wrap(new StringBuilder(1024),"'","'",s).toString();
+    }
+
+    public String sqlValue(Object o){
+        if(o==null)return "''";
+        if(o instanceof CharSequence){
+            return wrapsql(o.toString().replace("'","''"));
+        }
+        if(o instanceof Number){
+            return o.toString();
+        }
+
+        if(o instanceof Date){
+            Date dd = (Date)o;
+            String ss = new Timestamp(dd.getTime()).toString();
+            return wrapsql(ss);
+        }
+        return wrapsql(o.toString().replace("'","''"));
     }
 }
