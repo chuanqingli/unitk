@@ -11,14 +11,14 @@ public class InsertSqlBuilderTests {
 	@Test
 	public void getSql() {
 
-        InsertSqlBuilder tt = InsertSqlBuilder.getInstance("dfs");
+        InsertSqlBuilder tt = InsertSqlBuilder.getInstance(false);
 
         String[] ss = new String[]{"aa","bb","cc","dd"};
         // List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
         // CollectionUtil.getInstance().create(list,);
         
         Map<String,Object> map = new HashMap<String,Object>();
-        tt.unionall().insert("aa")
+        tt.insert("aa").fields(ss)
             .values(MapUtil.getInstance().create(new HashMap<String,Object>(),ss,new Object[]{"21312",134,345l,new Date()}))
             .values(MapUtil.getInstance().create(new HashMap<String,Object>(),ss,new Object[]{"你好",135,345l,new Date()}))
         .values(MapUtil.getInstance().create(new HashMap<String,Object>(),ss,new Object[]{"海南",136,345l,new Date()}));

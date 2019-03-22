@@ -1,26 +1,26 @@
 package unitk.util;
 import java.util.*;
-public interface InsertSqlBuilder{
-    static InsertSqlBuilder getInstance(boolean morevalues){
+public interface UpdateSqlBuilder{
+    static UpdateSqlBuilder getInstance(boolean morevalues){
         in resp = new in();
         //不支持morevalues
         if(!morevalues)resp.unionall();
         return resp;
     }
 
-    static InsertSqlBuilder getInstance(){
+    static UpdateSqlBuilder getInstance(){
         return new in();
     }
 
-    InsertSqlBuilder insert(String t);
-    InsertSqlBuilder fields(String... t);
-    InsertSqlBuilder fields(Collection t);
-    InsertSqlBuilder values(Collection t);
-    InsertSqlBuilder values(Map<String,Object> t);
-    InsertSqlBuilder values(Object... t);
+    UpdateSqlBuilder insert(String t);
+    UpdateSqlBuilder fields(String... t);
+    UpdateSqlBuilder fields(Collection t);
+    UpdateSqlBuilder values(Collection t);
+    UpdateSqlBuilder values(Map<String,Object> t);
+    UpdateSqlBuilder values(Object... t);
     String getSql();
 
-    class in implements InsertSqlBuilder{
+    class in implements UpdateSqlBuilder{
         class _Bean{
             String table;
             List values = new ArrayList();
@@ -29,35 +29,35 @@ public interface InsertSqlBuilder{
         }
 
         protected _Bean _b = new _Bean();
-        public final InsertSqlBuilder insert(String t){
+        public final UpdateSqlBuilder insert(String t){
             _b.table = t;
             return this;
         }
 
-        public final InsertSqlBuilder fields(Collection t){
+        public final UpdateSqlBuilder fields(Collection t){
             _b.fields.addAll(t);
             return this;
         }
 
-        public final InsertSqlBuilder fields(String... t){
+        public final UpdateSqlBuilder fields(String... t){
             return fields(Arrays.asList(t));
         }
 
-        public final InsertSqlBuilder values(Collection t){
+        public final UpdateSqlBuilder values(Collection t){
             _b.values.addAll(t);
             return this;
         }
 
-        public final InsertSqlBuilder values(Map<String,Object> t){
+        public final UpdateSqlBuilder values(Map<String,Object> t){
             _b.values.add(t);
             return this;
         }
 
-        public final InsertSqlBuilder values(Object... t){
+        public final UpdateSqlBuilder values(Object... t){
             return values(Arrays.asList(t));
         }
 
-        private final InsertSqlBuilder unionall(){
+        private final UpdateSqlBuilder unionall(){
             _b.morevalues=false;
             return this;
         }
