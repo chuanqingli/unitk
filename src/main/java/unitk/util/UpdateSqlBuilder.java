@@ -3,8 +3,6 @@ import java.util.*;
 public interface UpdateSqlBuilder{
     static UpdateSqlBuilder getInstance(boolean morevalues){
         in resp = new in();
-        //不支持morevalues
-        if(!morevalues)resp.unionall();
         return resp;
     }
 
@@ -12,7 +10,7 @@ public interface UpdateSqlBuilder{
         return new in();
     }
 
-    UpdateSqlBuilder insert(String t);
+    UpdateSqlBuilder update(String t);
     UpdateSqlBuilder fields(String... t);
     UpdateSqlBuilder fields(Collection t);
     UpdateSqlBuilder values(Collection t);
@@ -29,7 +27,7 @@ public interface UpdateSqlBuilder{
         }
 
         protected _Bean _b = new _Bean();
-        public final UpdateSqlBuilder insert(String t){
+        public final UpdateSqlBuilder update(String t){
             _b.table = t;
             return this;
         }
@@ -143,7 +141,7 @@ public interface UpdateSqlBuilder{
                     String sql1 = buf.toString();
 
                     buf.setLength(0);
-                    wrap(buf,"insert into ",_b.table,"(",sql0,")",sql1);
+                    wrap(buf,"update into ",_b.table,"(",sql0,")",sql1);
                     return buf.toString();
                 }
 
@@ -155,7 +153,7 @@ public interface UpdateSqlBuilder{
             String sql1 = buf.toString();
 
             buf.setLength(0);
-            wrap(buf,"insert into ",_b.table,"(",sql0,")values",sql1);
+            wrap(buf,"update into ",_b.table,"(",sql0,")values",sql1);
             return buf.toString();
         }
     }
